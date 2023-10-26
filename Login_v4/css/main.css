@@ -163,6 +163,13 @@ iframe {
   margin: 0 auto;
 }
 
+.close{
+  width: 35px;
+  position: relative;
+  top: -30px;
+  left: 30px;
+}
+
 .container-login100 {
   width: 100%;  
   min-height: 100vh;
@@ -474,3 +481,5 @@ iframe {
     padding-right: 15px;
   }
 } 
+
+
