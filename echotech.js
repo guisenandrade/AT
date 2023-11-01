@@ -10,7 +10,7 @@ app.use(bodyParser.json())
 const port = 3000;
 
 //acesso ao mongodb
-mongoose.connect('mongoose://127.0.0.1:27017/echotech',{
+mongoose.connect('mongodb://127.0.0.1:27017/echotech',{
     useNewUrlParser : true,
     useUnifiedTopology : true,
     serverSelectionTimeoutMS : 2000
@@ -20,7 +20,7 @@ mongoose.connect('mongoose://127.0.0.1:27017/echotech',{
 const UsuarioSchema = new mongoose.Schema({
     nomeCompleto : {type : String},
     email : {type : String},
-    CPF : {type : String},
+    cpf : {type : String},
     celular : {type : String},
     senha : {type : String}
 });
@@ -28,10 +28,10 @@ const UsuarioSchema = new mongoose.Schema({
 const Usuario = mongoose.model("Usuário", UsuarioSchema);
 
 //roteamentos
-app.post("/Login_vr4/singup", async(req, res)=>{
-    const nomeCompleto = req.body.nome;
+app.post("/singup", async(req, res)=>{
+    const nomeCompleto = req.body.nomeCompleto;
     const email = req.body.email;
-    const CPF = req.body.CPF;
+    const CPF = req.body.cpf;
     const celular = req.body.celular;
     const senha = req.body.senha;
 
@@ -39,12 +39,12 @@ app.post("/Login_vr4/singup", async(req, res)=>{
         return res.status(400).json({error : "Preencha todos os campos"})
     }
 
-    const emailExiste = await PermissionStatus.findOne({email:email})
+    const emailExiste = await Usuario.findOne({email:email})
     if(emailExiste){
         return res.status(400).json({error : "email já existe"})
     }
 
-    const CPFExiste = await PermissionStatus.findOne({CPF:CPF})
+    const CPFExiste = await Usuario.findOne({CPF:CPF})
     if(CPFExiste){
         return res.status(400).json({error : "CPF já existe"})
     }
@@ -67,7 +67,7 @@ app.post("/Login_vr4/singup", async(req, res)=>{
 
 //get de cadastro
 app.get("/singup", async (req, res)=>{
-    res.sendFile(__dirname + "/Login_v4/singup.html");
+    res.sendFile(__dirname + "/singup");
 })
 
 //rota raiz
