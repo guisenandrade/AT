@@ -18,24 +18,18 @@ mongoose.connect('mongodb://127.0.0.1:27017/echotech',{
 
 //model Usuário
 const UsuarioSchema = new mongoose.Schema({
-    nomeCompleto : {type : String},
     email : {type : String},
-    cpf : {type : String},
-    celular : {type : String},
     senha : {type : String}
 });
 
 const Usuario = mongoose.model("Usuário", UsuarioSchema);
 
 //roteamentos
-app.post("/singup", async(req, res)=>{
-    const nomeCompleto = req.body.nomeCompleto;
+app.post("/singin", async(req, res)=>{
     const email = req.body.email;
-    const cpf = req.body.cpf;
-    const celular = req.body.celular;
     const senha = req.body.senha;
 
-    if(nomeCompleto == null || email == null || CPF == null || celular == null || senha == null){
+    if( email == '' || senha == ''){
         return res.status(400).json({error : "Preencha todos os campos"})
     }
 
@@ -44,16 +38,9 @@ app.post("/singup", async(req, res)=>{
         return res.status(400).json({error : "email já existe"})
     }
 
-    const CPFExiste = await Usuario.findOne({cpf:cpf})
-    if(CPFExiste){
-        return res.status(400).json({error : "CPF já existe"})
-    }
 
     const usuario = new Usuario({
-        nomeCompleto : nomeCompleto,
         email : email,
-        CPF : CPF,
-        celular : celular,
         senha : senha
     });
 
@@ -65,9 +52,62 @@ app.post("/singup", async(req, res)=>{
     }
 });
 
+//model Usuário
+const CadastroSchema = new mongoose.Schema({
+    nomeCompleto : {type : String},
+    email : {type : String},
+    cpf : {type : String},
+    celular : {type : String},
+    senha : {type : String}
+});
+
+const Cadastro = mongoose.model("Cadastro", CadastroSchema);
+
+//roteamentos
+app.post("/singup", async(req, res)=>{
+    const nomeCompleto = req.body.nomeCompleto;
+    const email = req.body.email;
+    const cpf = req.body.cpf;
+    const celular = req.body.celular;
+    const senha = req.body.senha;
+
+    if(nomeCompleto == null || email == null || cpf == null || celular == null || senha == null){
+        return res.status(400).json({error : "Preencha todos os campos"})
+    }
+
+    const emailExiste = await Cadastro.findOne({email:email})
+    if(emailExiste){
+        return res.status(400).json({error : "email já existe"})
+    }
+
+    const CPFExiste = await Cadastro.findOne({cpf:cpf})
+    if(CPFExiste){
+        return res.status(400).json({error : "CPF já existe"})
+    }
+
+    const cadastro = new Cadastro({
+        nomeCompleto : nomeCompleto,
+        email : email,
+        cpf : cpf,
+        celular : celular,
+        senha : senha
+    });
+
+    try{
+        const newUsuario = await cadastro.save();
+        res.json({error : null, msg : "Cadastro OK", usuarioID : newUsuario._id});
+    } catch(error){
+        res.status(400).json({error});
+    }
+});
+
 //get de cadastro
+app.get("/singin", async (req, res)=>{
+    res.sendFile(__dirname + "./Login_v4/singin.html");
+})
+
 app.get("/singup", async (req, res)=>{
-    res.sendFile(__dirname + "/singup");
+    res.sendFile(__dirname + "./Login_v4/singup.html");
 })
 
 //rota raiz
