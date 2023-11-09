@@ -13,19 +13,18 @@ const port = 3000;
 mongoose.connect('mongodb://127.0.0.1:27017/echotech',{
     useNewUrlParser : true,
     useUnifiedTopology : true,
-    serverSelectionTimeoutMS : 2000
 });
 
-//model Usuário
-const UsuarioSchema = new mongoose.Schema({
-    email : {type : String},
+//model de login
+const LoginSchema = new mongoose.Schema({
+    email : {type : String, required : true},
     senha : {type : String}
 });
 
-const Usuario = mongoose.model("Usuário", UsuarioSchema);
+const Login = mongoose.model("Login", LoginSchema);
 
 //roteamentos
-app.post("/singin", async(req, res)=>{
+app.post("/Login_v4/signin", async(req, res)=>{
     const email = req.body.email;
     const senha = req.body.senha;
 
@@ -33,26 +32,25 @@ app.post("/singin", async(req, res)=>{
         return res.status(400).json({error : "Preencha todos os campos"})
     }
 
-    const emailExiste = await Usuario.findOne({email:email})
+    const emailExiste = await Login.findOne({email:email})
     if(emailExiste){
         return res.status(400).json({error : "email já existe"})
     }
 
-
-    const usuario = new Usuario({
+    const login = new Login({
         email : email,
         senha : senha
     });
 
     try{
-        const newUsuario = await usuario.save();
-        res.json({error : null, msg : "Cadastro OK", usuarioID : newUsuario._id});
+        const newLogin = await login.save();
+        res.json({error : null, msg : "Login feito com sucesso", loginID : newLogin._id});
     } catch(error){
         res.status(400).json({error});
     }
 });
 
-//model Usuário
+//model cadastro
 const CadastroSchema = new mongoose.Schema({
     nomeCompleto : {type : String},
     email : {type : String},
@@ -64,7 +62,7 @@ const CadastroSchema = new mongoose.Schema({
 const Cadastro = mongoose.model("Cadastro", CadastroSchema);
 
 //roteamentos
-app.post("/singup", async(req, res)=>{
+app.post("/signup", async(req, res)=>{
     const nomeCompleto = req.body.nomeCompleto;
     const email = req.body.email;
     const cpf = req.body.cpf;
@@ -94,20 +92,65 @@ app.post("/singup", async(req, res)=>{
     });
 
     try{
-        const newUsuario = await cadastro.save();
-        res.json({error : null, msg : "Cadastro OK", usuarioID : newUsuario._id});
+        const newCadastro = await cadastro.save();
+        res.json({error : null, msg : "Você foi cadastrado com sucesso", cadastroID : newCadastro._id});
     } catch(error){
         res.status(400).json({error});
     }
 });
 
-//get de cadastro
-app.get("/singin", async (req, res)=>{
-    res.sendFile(__dirname + "./Login_v4/singin.html");
+//model de contato
+const ContatoSchema = new mongoose.Schema({
+    nome : {type : String},
+    email : {type : String, required : true},
+    duvida : {type : String}
+});
+
+const Contato = mongoose.model("Contato", ContatoSchema);
+
+// roteamento de contato
+app.post("/contact", async(req, res)=>{
+    const nome = req.body.nome;
+    const email = req.body.email;
+    const duvida = req.body.duvida;
+
+    if(nome == '' || email == '' || duvida == ''){
+        return res.status(400).json({error : "Preencha todos os campos"})
+    }
+
+    const contato = new Contato({
+        nome : nome,
+        email : email,
+        duvida : duvida
+    });
+
+    try{
+        const newContato = await contato.save();
+        res.json({error : null, msg : "Sua dúvida foi salva iremos analisar e responde-lo em seu e-mail", contatoID : newContato._id});
+    } catch(error){
+        res.status(400).json({error});
+    }
+});
+
+
+// get de login
+app.get("/Login_v4/signin", async (req, res)=>{
+    res.sendFile(__dirname + "/Login_v4/signin.html");
 })
 
-app.get("/singup", async (req, res)=>{
-    res.sendFile(__dirname + "./Login_v4/singup.html");
+//get de cadastro
+app.get("/Login_v4/signup", async (req, res)=>{
+    res.sendFile(__dirname + "/Login_v4/signup.html");
+})
+
+// get de contato
+app.get("/contact", async (req, res)=>{
+    res.sendFile(__dirname + "/contact.html");
+})
+
+// get de contato
+app.get("/about", async (req, res)=>{
+    res.sendFile(__dirname + "/about.html");
 })
 
 //rota raiz
