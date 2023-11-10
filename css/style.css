@@ -9129,6 +9129,14 @@ textarea.form-control {
   animation: loader-dash 1.5s ease-in-out infinite;
   stroke-linecap: round; }
 
+.bg-black{
+  background-color: rgba(0, 0, 0, 0.7); /* O último valor (0.5) representa a opacidade (varia de 0 a 1) */
+  color: yellow; /* Define a cor do texto para branco ou outra cor legível */
+  padding: 20px; /* Adiciona algum espaçamento interno para melhorar a legibilidade */
+  /* border-radius: 20%; */
+}
+
+
 @-webkit-keyframes loader-rotate {
   100% {
     -webkit-transform: rotate(360deg);
