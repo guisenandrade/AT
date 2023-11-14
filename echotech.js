@@ -132,6 +132,67 @@ app.post("/contact", async(req, res)=>{
     }
 });
 
+//model de servico
+const ServicoSchema = new mongoose.Schema({
+    nome : {type : String, required : true},
+    email : {type : String},
+    celular : {type : String},
+    cpf : {type : String, required : true},
+    cep : {type : String, required : true},
+    logradouro : {type : String, required : true},
+    bairro : {type : String, required : true},
+    numero : {type : Number, required : true},
+    complemento : {type : String},
+    referencia : {type : String},
+    cidade : {type : String, required : true},
+    uf : {type : String, required : true}
+});
+
+const Servico = mongoose.model("Servico", ServicoSchema);
+
+// roteamento de contato
+app.post("/servico", async(req, res)=>{
+    const nome = req.body.nome
+    const email = req.body.email
+    const celular = req.body.celular
+    const cpf = req.body.cpf
+    const cep = req.body.cep
+    const logradouro = req.body.logradouro
+    const bairro = req.body.bairro
+    const numero = req.body.numero
+    const complemento = req.body.complemento
+    const referencia = req.body.referencia
+    const cidade = req.body.cidade
+    const uf = req.body.uf
+
+    if(nome == '' || email == '' || celular == '' || cpf == '' || cep == '' || logradouro == '' || bairro == '' || numero == '' || cidade == '' || uf == ''){
+        return res.status(400).json({error : "Preencha todos os campos"})
+    }
+
+    const servico = new Servico({
+         nome : nome,
+         email : email,
+         celular : celular,
+         cpf : cpf,
+         cep : cep,
+         logradouro : logradouro,
+         bairro : bairro,
+         numero : numero,
+         complemento : complemento,
+         referencia : referencia,
+         cidade : cidade,
+         uf : uf
+    });
+
+    try{
+        const newServico = await servico.save();
+        res.json({error : null, msg : "Seu serviço foi cadastrado, enviaremos um email para que possamos encontrar um dia para instalação do SolAir", servicoID : newServico._id});
+    } catch(error){
+        res.status(400).json({error});
+    }
+});
+
+
 
 // get de login
 app.get("/Login_v4/signin", async (req, res)=>{
@@ -148,9 +209,14 @@ app.get("/contact", async (req, res)=>{
     res.sendFile(__dirname + "/contact.html");
 })
 
-// get de contato
+// get de about
 app.get("/about", async (req, res)=>{
     res.sendFile(__dirname + "/about.html");
+})
+
+// get de servico
+app.get("/servico", async (req, res)=>{
+    res.sendFile(__dirname + "/servico.html");
 })
 
 //rota raiz
